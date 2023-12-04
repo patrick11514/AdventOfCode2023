@@ -6,7 +6,6 @@ const lines = getLines('input.txt')
 let sum = 0
 const blacklisted = [114, 58]
 const splitChars = ['.', '=', '&', '@', '#', '$']
-const mathSymbols = ['+', '-', '*', '/', '*']
 
 lines.forEach((line) => {
     let array = [line]
@@ -21,22 +20,7 @@ lines.forEach((line) => {
     }
 
     array.forEach((num) => {
-        if (mathSymbols.includes(num)) return
-
-        let include = false
-        for (const symbol of mathSymbols) {
-            if (num.includes(symbol)) {
-                if (!num.startsWith(symbol) && !num.endsWith(symbol)) {
-                    include = true
-                }
-            }
-        }
-
-        if (include) {
-            num = eval(num)
-        } else {
-            return
-        }
+        if (isNaN(parseInt(num))) return
 
         const number = parseInt(num)
         if (!blacklisted.includes(number)) {
