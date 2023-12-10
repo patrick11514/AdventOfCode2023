@@ -14,15 +14,19 @@ enum Status {
     Checked,
 }
 
-type pipe = '|' | '-' | 'L' | 'J' | '7' | 'F' | 'S' | '.' | 'O' | 'I'
+const characters = ['|', '-', 'L', 'J', '7', 'F', 'S', '.', 'O', 'I'] as const
 
-let start: undefined | coord
-const pipesMap: {
+type pipe = (typeof characters)[number]
+
+type charInfo = {
     char: pipe
     distance: number
     status: Status
     isValid: boolean
-}[][] = lines.map((line) =>
+}
+
+let start: undefined | coord
+const pipesMap: charInfo[][] = lines.map((line) =>
     line.split('').map((line) => {
         return {
             char: line as pipe,
@@ -205,236 +209,6 @@ const scanSurrounding2 = (coord: coord) => {
                         x,
                         y,
                     })
-                } else {
-                    //prokluzný bodíkos
-                    //IDK, JUST IGNORE THIS JUNK OF CODE XD
-                    //down
-                    const current: coord = {
-                        x,
-                        y,
-                    }
-
-                    if (current.y > coord.y) {
-                        if (['7', 'F'].includes(pipe.char)) {
-                            if (pipe.char === '7') {
-                                const rightCoord: coord = {
-                                    x: x + 1,
-                                    y,
-                                }
-
-                                const rightPipe = get(rightCoord)
-
-                                if (rightPipe && ['|', 'F', 'L'].includes(rightPipe.char)) {
-                                    if (rightPipe.distance != -1) {
-                                        while (true) {
-                                            current.y++
-                                            rightCoord.y++
-
-                                            const cPipe = get(current)
-                                            const rPipe = get(rightCoord)
-
-                                            if (!cPipe || !rPipe) break
-
-                                            if (!checkY(cPipe.char, rPipe.char)) break
-
-                                            if (cPipe.distance == -1) {
-                                                nextGround.push(current)
-                                                break
-                                            }
-
-                                            if (rPipe.distance == -1) {
-                                                nextGround.push(rightCoord)
-                                                break
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                const leftCoord: coord = {
-                                    x: x - 1,
-                                    y,
-                                }
-
-                                const leftPipe = get(leftCoord)
-
-                                if (leftPipe && ['|', 'J', '7'].includes(leftPipe.char)) {
-                                    if (leftPipe.distance != -1) {
-                                        while (true) {
-                                            current.y++
-                                            leftCoord.y++
-
-                                            const cPipe = get(current)
-                                            const lPipe = get(leftCoord)
-
-                                            if (!cPipe || !lPipe) break
-
-                                            if (!checkY(lPipe.char, cPipe.char)) break
-
-                                            if (cPipe.distance == -1) {
-                                                nextGround.push(current)
-                                                break
-                                            }
-
-                                            if (lPipe.distance == -1) {
-                                                nextGround.push(leftCoord)
-                                                break
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    //up
-                    if (current.y < coord.y) {
-                        if (['J', 'L'].includes(pipe.char)) {
-                            if (pipe.char === 'J') {
-                                const rightCoord: coord = {
-                                    x: x + 1,
-                                    y,
-                                }
-
-                                const rightPipe = get(rightCoord)
-
-                                if (rightPipe && ['|', 'F', 'L'].includes(rightPipe.char)) {
-                                    if (rightPipe.distance != -1) {
-                                        while (true) {
-                                            current.y--
-                                            rightCoord.y--
-
-                                            const cPipe = get(current)
-                                            const rPipe = get(rightCoord)
-
-                                            if (!cPipe || !rPipe) break
-
-                                            if (!checkY(cPipe.char, rPipe.char)) break
-
-                                            if (cPipe.distance == -1) {
-                                                nextGround.push(current)
-                                                break
-                                            }
-
-                                            if (rPipe.distance == -1) {
-                                                nextGround.push(rightCoord)
-                                                break
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                const leftCoord: coord = {
-                                    x: x - 1,
-                                    y,
-                                }
-
-                                const leftPipe = get(leftCoord)
-
-                                if (leftPipe && ['|', 'J', '7'].includes(leftPipe.char)) {
-                                    if (leftPipe.distance != -1) {
-                                        while (true) {
-                                            current.y--
-                                            leftCoord.y--
-
-                                            const cPipe = get(current)
-                                            const lPipe = get(leftCoord)
-
-                                            if (!cPipe || !lPipe) break
-
-                                            if (!checkY(lPipe.char, cPipe.char)) break
-
-                                            if (cPipe.distance == -1) {
-                                                nextGround.push(current)
-                                                break
-                                            }
-
-                                            if (lPipe.distance == -1) {
-                                                nextGround.push(leftCoord)
-                                                break
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    //left
-
-                    if (current.x < coord.x) {
-                        if (['J', '7'].includes(pipe.char)) {
-                            console.log(pipe.char)
-                            if (pipe.char === 'J') {
-                                console.log('A')
-                                const downCoord: coord = {
-                                    x,
-                                    y: y + 1,
-                                }
-
-                                const downPipe = get(downCoord)
-
-                                if (downPipe && ['-', '7', 'F'].includes(downPipe.char)) {
-                                    if (downPipe.distance != -1) {
-                                        while (true) {
-                                            current.x--
-                                            downCoord.x--
-
-                                            const cPipe = get(current)
-                                            const dPipe = get(downCoord)
-
-                                            if (!cPipe || !dPipe) break
-
-                                            if (!checkX(cPipe.char, dPipe.char)) break
-
-                                            if (cPipe.distance == -1) {
-                                                nextGround.push(current)
-                                                break
-                                            }
-
-                                            if (dPipe.distance == -1) {
-                                                nextGround.push(downCoord)
-                                                break
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                console.log('B')
-                                const upCoord: coord = {
-                                    x,
-                                    y: y - 1,
-                                }
-
-                                const upPipe = get(upCoord)
-
-                                if (upPipe && ['-', 'J', 'L'].includes(upPipe.char)) {
-                                    if (upPipe.distance != -1) {
-                                        while (true) {
-                                            current.x--
-                                            upCoord.x--
-
-                                            const cPipe = get(current)
-                                            const uPipe = get(upCoord)
-
-                                            if (!cPipe || !uPipe) break
-
-                                            if (!checkX(uPipe.char, cPipe.char)) break
-
-                                            if (cPipe.distance == -1) {
-                                                nextGround.push(current)
-                                                break
-                                            }
-
-                                            if (uPipe.distance == -1) {
-                                                nextGround.push(upCoord)
-                                                break
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -595,7 +369,76 @@ const doDFS = (coord: coord) => {
 
 const componentSizes: number[] = []
 
+const createChar = (char: pipe, data: charInfo): charInfo[][] => {
+    const lines: charInfo[][] = [[], [], []]
+
+    let chars = {} as Record<pipe, charInfo>
+
+    characters.forEach((char) => {
+        chars[char] = {
+            ...data,
+            char,
+        }
+    })
+
+    switch (char) {
+        case '.': {
+            lines[0].push(chars['.'], chars['.'], chars['.'])
+            lines[1].push(chars['.'], chars['.'], chars['.'])
+            lines[2].push(chars['.'], chars['.'], chars['.'])
+            break
+        }
+        case '|': {
+            lines[0].push(chars['.'], chars['|'], chars['.'])
+            lines[1].push(chars['.'], chars['|'], chars['.'])
+            lines[2].push(chars['.'], chars['|'], chars['.'])
+            break
+        }
+        case '-': {
+            lines[0].push(chars['.'], chars['.'], chars['.'])
+            lines[1].push(chars['-'], chars['-'], chars['-'])
+            lines[2].push(chars['.'], chars['.'], chars['.'])
+            break
+        }
+        case 'L': {
+            lines[0].push(chars['.'], chars['|'], chars['.'])
+            lines[1].push(chars['.'], chars['|'], chars['.'])
+            lines[2].push(chars['.'], chars['L'], chars['-'])
+            break
+        }
+        case 'J': {
+            lines[0].push(chars['.'], chars['|'], chars['.'])
+            lines[1].push(chars['.'], chars['|'], chars['.'])
+            lines[2].push(chars['-'], chars['J'], chars['.'])
+            break
+        }
+        case '7': {
+            lines[0].push(chars['-'], chars['7'], chars['.'])
+            lines[1].push(chars['.'], chars['|'], chars['.'])
+            lines[2].push(chars['.'], chars['|'], chars['.'])
+            break
+        }
+        case 'F': {
+            lines[0].push(chars['.'], chars['F'], chars['-'])
+            lines[1].push(chars['.'], chars['|'], chars['.'])
+            lines[2].push(chars['.'], chars['|'], chars['.'])
+            break
+        }
+    }
+
+    return lines
+}
+
 const solution2 = () => {
+    const newPipesMap: typeof pipesMap = []
+
+    pipesMap.forEach((line, lineIndex) => {
+        const lineRows: charInfo[][] = [[], [], []]
+        line.forEach((char, charIndex) => {
+            const data = createChar(char.char, char)
+        })
+    })
+
     pipesMap.forEach((line, lI) => {
         line.forEach((c, cI) => {
             if (c.status === Status.Unchecked && c.distance === -1 && c.char === '.') {
